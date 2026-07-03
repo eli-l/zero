@@ -2,6 +2,7 @@ package tui
 
 import (
 	"strings"
+	"unicode/utf8"
 
 	tea "charm.land/bubbletea/v2"
 
@@ -112,23 +113,28 @@ func (p parsedBinding) Matcher() func(tea.KeyMsg) bool {
 		mod |= tea.ModSuper // ⌘ Command on macOS, ⊞ Win on Windows
 	}
 
-	// ctrl+letter fast path — the terminal may report this as a control
-	// character code (e.g. ctrl+o → 0x0F), so use keyCtrl which handles
-	// both the code and ModCtrl representations.
+	// ctrl+letter fast path — use exact modifier equality so that a
+	// configured ctrl+o does NOT fire on ctrl+alt+o or ctrl+shift+o.
+	// Note: in raw terminal mode Bubble Tea may report ctrl+letter as
+	// {Code:letter, Mod:ModCtrl} (handled below), or as a control char
+	// code (e.g. 0x0F) without a modifier flag.  The latter is handled by
+	// the text-based fallback in model.go for default bindings; for
+	// configured bindings the code+mod path below is what the user
+	// expressed.
 	if mod == tea.ModCtrl && p.code >= 'a' && p.code <= 'z' {
 		return func(msg tea.KeyMsg) bool {
-			return keyCtrl(msg, p.code)
+			return msg.Key().Code == p.code && msg.Key().Mod == mod
 		}
 	}
 
 	if p.text != "" {
 		return func(msg tea.KeyMsg) bool {
-			return msg.Key().Text == p.text && msg.Key().Mod.Contains(mod)
+			return msg.Key().Text == p.text && msg.Key().Mod == mod
 		}
 	}
 
 	return func(msg tea.KeyMsg) bool {
-		return msg.Key().Code == p.code && msg.Key().Mod.Contains(mod)
+		return msg.Key().Code == p.code && msg.Key().Mod == mod
 	}
 }
 
@@ -205,7 +211,7 @@ func parseBinding(s string) parsedBinding {
 		p.code = 0
 	default:
 		// Single character, any modifier context
-		if len(keyPart) == 1 {
+		if utf8.RuneCountInString(keyPart) == 1 {
 			p.code = []rune(keyPart)[0]
 		}
 		// else unrecognised — leave zero so it falls through to default
@@ -246,14 +252,6 @@ func resolveKeyBindings(cfg config.KeyBindingsConfig) keyBindings {
 		togglePlan:     parseBinding(string(cfg.TogglePlan)),
 		toggleSidebar:  parseBinding(string(cfg.ToggleSidebar)),
 	}
-}
-
-// builtinBindings holds the default hardcoded bindings. keybinding config
-// overrides the built-in on a per-action basis when the field is non-empty.
-var builtinBindings = keyBindings{
-	// All zero: the model.go dispatch uses hardcoded key-case comparisons.
-	// These are the canonical defaults and are never matched through the
-	// parsedBinding.Matcher path — the config-override path is separate.
 }
 
 // keyMatch returns true when msg matches either the user-configured binding b
