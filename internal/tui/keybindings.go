@@ -229,11 +229,11 @@ func labelOr(b parsedBinding, defaultLabel string) string {
 // dispatch time. When a binding's parsedBinding is zero, the built-in default
 // check in model.go's updateModel should be used.
 type keyBindings struct {
-	toggleDetailed  parsedBinding
-	toggleMouse     parsedBinding
-	cycleReasoning  parsedBinding
-	togglePlan      parsedBinding
-	toggleSidebar   parsedBinding
+	toggleDetailed parsedBinding
+	toggleMouse    parsedBinding
+	cycleReasoning parsedBinding
+	togglePlan     parsedBinding
+	toggleSidebar  parsedBinding
 }
 
 // resolveKeyBindings converts a user-facing KeyBindingsConfig into the

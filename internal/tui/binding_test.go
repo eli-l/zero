@@ -161,5 +161,3 @@ func TestDispatchOptionO(t *testing.T) {
 		t.Errorf("model.keyMatch should NOT match ctrl+o when option+o is configured")
 	}
 }
-
-
