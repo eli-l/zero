@@ -42,7 +42,6 @@ var expectedCatalogIDs = []string{
 	"opencode-go",
 	"opencode-go-anthropic-compatible",
 	"atomic-chat",
-	"opencode-go-openai",
 	"opencode-go-anthropic",
 	"chatgpt-proxy",
 	"custom-openai-compatible",
@@ -295,7 +294,7 @@ func TestListByTransportPreservesCatalogOrder(t *testing.T) {
 		TransportBedrock:         {"bedrock"},
 		TransportVertex:          {"vertex"},
 		TransportAnthropicCompat: {"minimax", "minimaxi-cn", "opencode-go-anthropic", "custom-anthropic-compatible"},
-		TransportOpenAICompat:    {"gitlawb-opengateway", "ollama-cloud", "ollama", "lmstudio", "openrouter", "huggingface", "chatgpt", "groq", "deepseek", "together", "dashscope", "moonshot", "longcat", "nvidia-nim", "mistral", "github", "xai", "venice", "xiaomi-mimo", "bankr", "zai", "zai-cn", "kilocode", "opencode", "opencode-go-openai", "atomic-chat", "chatgpt-proxy", "custom-openai-compatible"},
+		TransportOpenAICompat:    {"gitlawb-opengateway", "ollama-cloud", "ollama", "lmstudio", "openrouter", "huggingface", "chatgpt", "groq", "deepseek", "together", "dashscope", "moonshot", "longcat", "nvidia-nim", "mistral", "github", "xai", "venice", "xiaomi-mimo", "bankr", "zai", "zai-cn", "kilocode", "opencode", "opencode-go", "atomic-chat", "chatgpt-proxy", "custom-openai-compatible"},
 	}
 
 	for transport, wantIDs := range cases {
