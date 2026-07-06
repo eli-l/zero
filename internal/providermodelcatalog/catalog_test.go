@@ -52,6 +52,11 @@ func TestModelsAreProviderScoped(t *testing.T) {
 			want:     []string{"mimo-v2.5-pro", "tencent/hy3"},
 			notWant:  []string{"openai/gpt-4.1", "claude-sonnet-4.5"},
 		},
+		{
+			provider: "opencode-go-anthropic",
+			want:     []string{"MiniMax-M3", "MiniMax-M2.7", "qwen-plus", "qwen-max"},
+			notWant:  []string{"gpt-4.1", "claude-sonnet-4.5", "deepseek-chat"},
+		},
 	}
 
 	for _, tt := range tests {
