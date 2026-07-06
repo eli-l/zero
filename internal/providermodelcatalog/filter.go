@@ -9,7 +9,7 @@ import (
 // ModelIDAllowedForProvider reports whether a model ID is permitted for the
 // given provider under provider-specific allow/block rules.
 // For opencode-go-anthropic-compatible: only Qwen and MiniMax model IDs are allowed.
-// For all other providers: all model IDs are allowed.
+// Allows ANY model by default
 func ModelIDAllowedForProvider(providerID, modelID string) bool {
 	modelID = strings.ToLower(strings.TrimSpace(modelID))
 	if modelID == "" {
