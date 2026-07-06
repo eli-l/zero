@@ -54,7 +54,7 @@ func TestModelsAreProviderScoped(t *testing.T) {
 		},
 		{
 			provider: "opencode-go-anthropic-compatible",
-			want:     []string{"MiniMax-M3", "MiniMax-M2.7", "qwen3.7-plus", "qwen3.7-max"},
+			want:     []string{"minimax-m3", "minimax-m2.7", "qwen3.7-plus", "qwen3.7-max"},
 			notWant:  []string{"gpt-4.1", "claude-sonnet-4.5", "deepseek-chat"},
 		},
 	}

@@ -158,8 +158,8 @@ var curatedModels = map[string][]Model{
 		{ID: "gpt-4o-mini", Description: "fast model"},
 	},
 	"opencode-go-anthropic-compatible": {
-		{ID: "MiniMax-M3", Description: "MiniMax M3: default"},
-		{ID: "MiniMax-M2.7", Description: "Minimax M2.7: coding model"},
+		{ID: "minimax-m3", Description: "MiniMax M3: default"},
+		{ID: "minimax-m2.7", Description: "MiniMax M2.7: coding model"},
 		{ID: "qwen3.7-plus", Description: "Qwen 3.7 Plus: balanced model"},
 		{ID: "qwen3.7-max", Description: "Qwen 3.7 Max: strong model"},
 	},
