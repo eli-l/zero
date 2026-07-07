@@ -2,6 +2,7 @@ package providermodeldiscovery
 
 import (
 	"context"
+	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -263,30 +264,30 @@ func TestDiscoverCatalogMergesLiveModelsWithModelsDevMetadata(t *testing.T) {
 
 func TestLiveModelAllowedWithoutCatalogChecksProviderGateFirst(t *testing.T) {
 	// The ModelIDAllowedForProvider check runs before the others.
-	// For the restricted provider (opencode-go-anthropic-compatible) a
+	// For the restricted provider (opencode-go-anthropic) a
 	// non-allowed model returns false immediately, without reaching the
 	// IsKnownNonCodingModelID, Local, or LooksLikeCodingModelID checks.
 	restricted := providercatalog.Descriptor{
-		ID:    "opencode-go-anthropic-compatible",
+		ID:    "opencode-go-anthropic",
 		Local: true, // would pass the Local check if we got past the gate
 	}
 
 	// A model that isn't qwen/minimax is blocked at the gate, even though
 	// Local=true would let any model through on its own.
 	if got := liveModelAllowedWithoutCatalog(restricted, "claude-sonnet-4"); got != false {
-		t.Fatal("liveModelAllowedWithoutCatalog: want false for claude-sonnet-4 on opencode-go-anthropic-compatible (blocked by ModelIDAllowedForProvider)")
+		t.Fatal("liveModelAllowedWithoutCatalog: want false for claude-sonnet-4 on opencode-go-anthropic (blocked by ModelIDAllowedForProvider)")
 	}
 
 	// A qwen model passes the gate and continues to the remaining checks;
 	// it's not a known non-coding model and looks like a coding model, so
 	// the result is true.
 	if got := liveModelAllowedWithoutCatalog(restricted, "qwen-max"); got != true {
-		t.Fatal("liveModelAllowedWithoutCatalog: want true for qwen-max on opencode-go-anthropic-compatible (passes all checks)")
+		t.Fatal("liveModelAllowedWithoutCatalog: want true for qwen-max on opencode-go-anthropic (passes all checks)")
 	}
 
 	// A minimax model also passes the gate.
 	if got := liveModelAllowedWithoutCatalog(restricted, "minimax-text-01"); got != true {
-		t.Fatal("liveModelAllowedWithoutCatalog: want true for minimax-text-01 on opencode-go-anthropic-compatible (passes all checks)")
+		t.Fatal("liveModelAllowedWithoutCatalog: want true for minimax-text-01 on opencode-go-anthropic (passes all checks)")
 	}
 
 	// Unrestricted provider: all models pass the gate, so the other checks
@@ -300,6 +301,64 @@ func TestLiveModelAllowedWithoutCatalogChecksProviderGateFirst(t *testing.T) {
 	if got := liveModelAllowedWithoutCatalog(openAI, "text-embedding-3-large"); got != false {
 		t.Fatal("liveModelAllowedWithoutCatalog: want false for embedding model on openai")
 	}
+}
+
+func TestDiscoverCatalogIgnoresOnLiveModelsError(t *testing.T) {
+	client := &http.Client{Transport: discoveryTestRoundTripper(func(r *http.Request) (*http.Response, error) {
+		body := ""
+		switch r.URL.Path {
+		case "/api.json":
+			body = `{
+				"openai": {
+					"models": {
+						"gpt-4.1": {"id": "gpt-4.1", "name": "GPT-4.1"}
+					}
+				}
+			}`
+		case "/v1/models":
+			body = `{"data":[{"id":"gpt-4.1"}]}`
+		default:
+			t.Fatalf("unexpected request path %q", r.URL.Path)
+		}
+		return &http.Response{
+			StatusCode: http.StatusOK,
+			Status:     "200 OK",
+			Header:     make(http.Header),
+			Body:       io.NopCloser(strings.NewReader(body)),
+			Request:    r,
+		}, nil
+	})}
+
+	provider := providercatalog.Descriptor{
+		ID:             "openai",
+		Transport:      providercatalog.TransportOpenAI,
+		DefaultBaseURL: "https://example.test/v1",
+		RequiresAuth:   true,
+	}
+	models, err := DiscoverCatalog(context.Background(), provider, config.ProviderProfile{
+		CatalogID:    "openai",
+		ProviderKind: config.ProviderKindOpenAI,
+		BaseURL:      "https://example.test/v1",
+		APIKey:       "sk-live",
+	}, Options{
+		HTTPClient:   client,
+		ModelsDevURL: "https://example.test/api.json",
+		OnLiveModels: func([]Model) error {
+			return errors.New("cache write failed")
+		},
+	})
+	if err != nil {
+		t.Fatalf("DiscoverCatalog returned error: %v", err)
+	}
+	if got := strings.Join(modelIDs(models), ","); got != "gpt-4.1" {
+		t.Fatalf("models = %s, want live model despite persistence failure", got)
+	}
+}
+
+type discoveryTestRoundTripper func(*http.Request) (*http.Response, error)
+
+func (fn discoveryTestRoundTripper) RoundTrip(request *http.Request) (*http.Response, error) {
+	return fn(request)
 }
 
 func modelIDs(models []Model) []string {
