@@ -303,7 +303,7 @@ func TestLiveModelAllowedWithoutCatalogChecksProviderGateFirst(t *testing.T) {
 	}
 }
 
-func TestDiscoverCatalogIgnoresOnLiveModelsError(t *testing.T) {
+func TestDiscoverCatalog_OnLiveModelsErrorIsSwallowed(t *testing.T) {
 	client := &http.Client{Transport: discoveryTestRoundTripper(func(r *http.Request) (*http.Response, error) {
 		body := ""
 		switch r.URL.Path {
@@ -316,7 +316,7 @@ func TestDiscoverCatalogIgnoresOnLiveModelsError(t *testing.T) {
 				}
 			}`
 		case "/v1/models":
-			body = `{"data":[{"id":"gpt-4.1"}]}`
+			body = `{"data":[{"id":"gpt-image-1"}]}`
 		default:
 			t.Fatalf("unexpected request path %q", r.URL.Path)
 		}
@@ -335,6 +335,8 @@ func TestDiscoverCatalogIgnoresOnLiveModelsError(t *testing.T) {
 		DefaultBaseURL: "https://example.test/v1",
 		RequiresAuth:   true,
 	}
+	callbackErr := errors.New("cache write failed")
+	var gotLive []Model
 	models, err := DiscoverCatalog(context.Background(), provider, config.ProviderProfile{
 		CatalogID:    "openai",
 		ProviderKind: config.ProviderKindOpenAI,
@@ -343,15 +345,19 @@ func TestDiscoverCatalogIgnoresOnLiveModelsError(t *testing.T) {
 	}, Options{
 		HTTPClient:   client,
 		ModelsDevURL: "https://example.test/api.json",
-		OnLiveModels: func([]Model) error {
-			return errors.New("cache write failed")
+		OnLiveModels: func(models []Model) error {
+			gotLive = append([]Model{}, models...)
+			return callbackErr
 		},
 	})
 	if err != nil {
 		t.Fatalf("DiscoverCatalog returned error: %v", err)
 	}
+	if got := strings.Join(modelIDs(gotLive), ","); got != "gpt-image-1" {
+		t.Fatalf("OnLiveModels got %q, want raw live models before catalog fallback", got)
+	}
 	if got := strings.Join(modelIDs(models), ","); got != "gpt-4.1" {
-		t.Fatalf("models = %s, want live model despite persistence failure", got)
+		t.Fatalf("models = %s, want catalog fallback despite persistence failure", got)
 	}
 }
 
