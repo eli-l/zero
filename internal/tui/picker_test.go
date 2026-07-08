@@ -654,22 +654,19 @@ func TestAssembleModelPickerItemsDedupesByProviderAndModelPairNotModelIDAlone(t 
 	}
 }
 
-// Favorites keep the pre-provider-aware semantics: one row per favorited
-// model ID, even when that model ID is offered by multiple providers. Recent
-// and Catalog must also skip any model ID already surfaced under Favorites,
-// so a favorited model doesn't reappear in a second group. Recent/Catalog
-// still de-dup among themselves by provider+model so cross-provider rows stay
-// distinct.
-func TestAssembleModelPickerItemsFavoritesDedupByModelIDAndHideFromOtherGroups(t *testing.T) {
-	m := model{favoriteModels: map[string]bool{"shared-model": true}}
+// Favorites are keyed by provider/model. Only the favorited provider+model is
+// hidden from Recent/Catalog; the same model id from a different provider is
+// still independently visible in its own group.
+func TestAssembleModelPickerItemsFavoritesDedupByProviderAndModelAndHideFromOtherGroups(t *testing.T) {
+	m := model{favoriteModels: map[string]bool{"provider-a/shared-model": true}}
 	recent := []pickerItem{
 		{Value: "shared-model", OwnerProvider: "provider-a"},
 		{Value: "shared-model", OwnerProvider: "provider-b"},
 	}
 	catalog := []pickerItem{
-		{Value: "shared-model", OwnerProvider: "provider-a"},
-		{Value: "shared-model", OwnerProvider: "provider-c"},
-		{Value: "other-model", OwnerProvider: "provider-a"},
+		{Group: "Catalog", Value: "shared-model", OwnerProvider: "provider-a"},
+		{Group: "Catalog", Value: "shared-model", OwnerProvider: "provider-c"},
+		{Group: "Catalog", Value: "other-model", OwnerProvider: "provider-a"},
 	}
 	items := m.assembleModelPickerItems(recent, catalog)
 
@@ -682,26 +679,37 @@ func TestAssembleModelPickerItemsFavoritesDedupByModelIDAndHideFromOtherGroups(t
 	if len(favorites) != 1 {
 		t.Fatalf("expected exactly one Favorites row for shared-model, got %#v", favorites)
 	}
-	// The deduped Favorites row keeps whichever occurrence comes first in
-	// recent+catalog order — here provider-a from recent[0]. Pin that down
-	// explicitly rather than leaving it implicit.
-	if favorites[0].OwnerProvider != "provider-a" {
-		t.Fatalf("expected surviving favorite to keep first-seen provider %q, got %#v", "provider-a", favorites[0])
+	if favorites[0].Value != "shared-model" || favorites[0].OwnerProvider != "provider-a" {
+		t.Fatalf("expected provider-a/shared-model favorite, got %#v", favorites[0])
 	}
+	if got := countPickerItems(items, "Recent", "provider-a", "shared-model"); got != 0 {
+		t.Fatalf("expected provider-a/shared-model hidden from Recent, got %d in %#v", got, items)
+	}
+	if got := countPickerItems(items, "Catalog", "provider-a", "shared-model"); got != 0 {
+		t.Fatalf("expected provider-a/shared-model hidden from Catalog, got %d in %#v", got, items)
+	}
+	if got := countPickerItems(items, "Recent", "provider-b", "shared-model"); got != 1 {
+		t.Fatalf("expected provider-b/shared-model once in Recent, got %d in %#v", got, items)
+	}
+	if got := countPickerItems(items, "Catalog", "provider-c", "shared-model"); got != 1 {
+		t.Fatalf("expected provider-c/shared-model once in Catalog, got %d in %#v", got, items)
+	}
+	if got := countPickerItems(items, "Catalog", "provider-a", "other-model"); got != 1 {
+		t.Fatalf("expected provider-a/other-model once in Catalog, got %d in %#v", got, items)
+	}
+	if len(items) != 4 {
+		t.Fatalf("expected 4 picker items, got %d: %#v", len(items), items)
+	}
+}
+
+func countPickerItems(items []pickerItem, group, ownerProvider, value string) int {
+	count := 0
 	for _, item := range items {
-		if item.Group != "Favorites" && item.Value == "shared-model" {
-			t.Fatalf("favorited model id leaked into %s: %#v", item.Group, item)
+		if item.Group == group && item.OwnerProvider == ownerProvider && item.Value == value {
+			count++
 		}
 	}
-	var otherCatalog []pickerItem
-	for _, item := range items {
-		if item.Group != "Favorites" && item.Group != "Recent" && item.Value == "other-model" {
-			otherCatalog = append(otherCatalog, item)
-		}
-	}
-	if len(otherCatalog) != 1 {
-		t.Fatalf("expected other-model to appear once in Catalog, got %#v", items)
-	}
+	return count
 }
 
 // registryModelPickerItem must tag rows with OwnerProvider so

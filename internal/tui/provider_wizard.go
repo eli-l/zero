@@ -1133,10 +1133,6 @@ func (m model) applyProviderWizard() (model, tea.Cmd) {
 	// Refresh savedProviders so /model shows the newly added / updated provider
 	// without requiring a restart. The profile was just persisted (above) and is
 	// guaranteed usable (key stored / env var set / local), so it qualifies.
-	if strings.TrimSpace(profile.Name) != "" {
-		m.savedProviders = mergeSavedProvider(m.savedProviders, profile)
-	}
-
 	if nextProvider != nil {
 		m.provider = nextProvider
 	}
@@ -1972,21 +1968,4 @@ func providerWizardAPIFormat(provider providercatalog.Descriptor) string {
 		return ""
 	}
 	return string(provider.SupportedAPIFormats[0])
-}
-
-// mergeSavedProvider replaces or appends a profile in the saved list by name.
-// This lets the provider wizard refresh m.savedProviders so /model sees newly
-// added providers without requiring a restart.
-func mergeSavedProvider(profiles []config.ProviderProfile, profile config.ProviderProfile) []config.ProviderProfile {
-	name := strings.TrimSpace(profile.Name)
-	if name == "" {
-		return profiles
-	}
-	for i, p := range profiles {
-		if strings.EqualFold(strings.TrimSpace(p.Name), name) {
-			profiles[i] = profile
-			return profiles
-		}
-	}
-	return append(profiles, profile)
 }

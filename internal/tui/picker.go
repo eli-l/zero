@@ -514,7 +514,7 @@ func modelFavoriteKey(item pickerItem) string {
 		return ""
 	}
 	if owner := strings.TrimSpace(item.OwnerProvider); owner != "" {
-		return owner + "/" + id
+		return strings.ToLower(owner) + "/" + id
 	}
 	return id
 }
@@ -962,6 +962,14 @@ func favoriteModelSet(models []string) map[string]bool {
 		model = strings.TrimSpace(model)
 		if model == "" {
 			continue
+		}
+		if provider, id, ok := strings.Cut(model, "/"); ok {
+			provider = strings.TrimSpace(provider)
+			id = strings.TrimSpace(id)
+			if provider == "" || id == "" {
+				continue
+			}
+			model = strings.ToLower(provider) + "/" + id
 		}
 		favorites[model] = true
 	}

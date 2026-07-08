@@ -264,30 +264,30 @@ func TestDiscoverCatalogMergesLiveModelsWithModelsDevMetadata(t *testing.T) {
 
 func TestLiveModelAllowedWithoutCatalogChecksProviderGateFirst(t *testing.T) {
 	// The ModelIDAllowedForProvider check runs before the others.
-	// For the restricted provider (opencode-go-anthropic) a
+	// For the restricted provider (opencode-go-anthropic-compatible) a
 	// non-allowed model returns false immediately, without reaching the
 	// IsKnownNonCodingModelID, Local, or LooksLikeCodingModelID checks.
 	restricted := providercatalog.Descriptor{
-		ID:    "opencode-go-anthropic",
+		ID:    "opencode-go-anthropic-compatible",
 		Local: true, // would pass the Local check if we got past the gate
 	}
 
 	// A model that isn't qwen/minimax is blocked at the gate, even though
 	// Local=true would let any model through on its own.
 	if got := liveModelAllowedWithoutCatalog(restricted, "claude-sonnet-4"); got != false {
-		t.Fatal("liveModelAllowedWithoutCatalog: want false for claude-sonnet-4 on opencode-go-anthropic (blocked by ModelIDAllowedForProvider)")
+		t.Fatal("liveModelAllowedWithoutCatalog: want false for claude-sonnet-4 on opencode-go-anthropic-compatible (blocked by ModelIDAllowedForProvider)")
 	}
 
 	// A qwen model passes the gate and continues to the remaining checks;
 	// it's not a known non-coding model and looks like a coding model, so
 	// the result is true.
 	if got := liveModelAllowedWithoutCatalog(restricted, "qwen-max"); got != true {
-		t.Fatal("liveModelAllowedWithoutCatalog: want true for qwen-max on opencode-go-anthropic (passes all checks)")
+		t.Fatal("liveModelAllowedWithoutCatalog: want true for qwen-max on opencode-go-anthropic-compatible (passes all checks)")
 	}
 
 	// A minimax model also passes the gate.
 	if got := liveModelAllowedWithoutCatalog(restricted, "minimax-text-01"); got != true {
-		t.Fatal("liveModelAllowedWithoutCatalog: want true for minimax-text-01 on opencode-go-anthropic (passes all checks)")
+		t.Fatal("liveModelAllowedWithoutCatalog: want true for minimax-text-01 on opencode-go-anthropic-compatible (passes all checks)")
 	}
 
 	// Unrestricted provider: all models pass the gate, so the other checks

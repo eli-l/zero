@@ -52,7 +52,9 @@ func runProvidersModels(args []string, stdout io.Writer, stderr io.Writer, deps 
 		return writeAppError(stderr, err.Error(), exitProvider)
 	}
 	if err := persistDiscoveredProviderModels(deps, profile.Name, models); err != nil {
-		return writeAppError(stderr, err.Error(), exitProvider)
+		if _, writeErr := fmt.Fprintf(stderr, "[zero] warning: %s\n", err.Error()); writeErr != nil {
+			return exitCrash
+		}
 	}
 
 	// Apply provider-specific model filtering for catalog-backed profiles.

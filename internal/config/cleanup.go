@@ -8,8 +8,8 @@ import (
 )
 
 // CleanupStaleFavorites removes favorite model entries from the user and
-// project configs that do not reference a provider/model available from the
-// global user config.
+// project configs when they are not valid provider/model references or do not
+// reference a provider/model available from the global user config.
 //
 // The project config path is optional (empty = no project config). Returns the
 // number of entries removed; safe to run on every startup (idempotent).
@@ -147,7 +147,7 @@ func (inventory favoriteModelInventory) validFavoriteModelRef(entry string) bool
 	if !ok {
 		return false
 	}
-	if models == nil {
+	if len(models) == 0 {
 		return true
 	}
 	return models[strings.ToLower(model)]

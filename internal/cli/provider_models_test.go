@@ -175,21 +175,28 @@ func TestRunProvidersModelsFiltersForCatalogProfile(t *testing.T) {
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
 	deps := commandCenterDeps(t)
+	opencodeProfile := config.ProviderProfile{
+		Name:         "opencode-go",
+		ProviderKind: config.ProviderKindAnthropicCompat,
+		CatalogID:    "opencode-go-anthropic-compatible",
+		BaseURL:      "https://api.example.com/zen/go/v1",
+		APIKey:       "sk-test",
+		Model:        "minimax-max",
+	}
 	// Override the resolved config to include a catalog-backed profile.
 	deps.resolveConfig = func(_ string, _ config.Overrides) (config.ResolvedConfig, error) {
-		profile := config.ProviderProfile{
-			Name:         "opencode-go",
-			ProviderKind: config.ProviderKindAnthropicCompat,
-			CatalogID:    "opencode-go-anthropic-compatible",
-			BaseURL:      "https://api.example.com/zen/go/v1",
-			APIKey:       "sk-test",
-			Model:        "minimax-max",
-		}
 		return config.ResolvedConfig{
 			ActiveProvider: "opencode-go",
-			Providers:      []config.ProviderProfile{profile},
-			Provider:       profile,
+			Providers:      []config.ProviderProfile{opencodeProfile},
+			Provider:       opencodeProfile,
 		}, nil
+	}
+	configPath, err := deps.userConfigPath()
+	if err != nil {
+		t.Fatalf("config path: %v", err)
+	}
+	if _, err := config.UpsertProvider(configPath, opencodeProfile, true); err != nil {
+		t.Fatalf("seed opencode-go provider: %v", err)
 	}
 	deps.discoverProviderModels = func(_ context.Context, _ config.ProviderProfile) ([]providermodeldiscovery.Model, error) {
 		return []providermodeldiscovery.Model{
