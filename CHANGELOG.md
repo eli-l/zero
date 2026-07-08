@@ -6,6 +6,86 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 aims to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) once the first release is
 tagged. Until then, source builds report the version `dev`.
 
+## [0.3.0](https://github.com/eli-l/zero/compare/v0.2.0...v0.3.0) (2026-07-08)
+
+
+### Features
+
+* add --auto flag for LLM-generated commit messages ([#423](https://github.com/eli-l/zero/issues/423)) ([b0abde7](https://github.com/eli-l/zero/commit/b0abde7d0697e808480cd59d69a6f4d0c6320475))
+* add zero changes push and pr subcommands, and extra repo-info metrics ([#391](https://github.com/eli-l/zero/issues/391)) ([2312abe](https://github.com/eli-l/zero/commit/2312abe5ddd95f4c6ef373cfb61cc03092f48cdd))
+* agent quality, caching, retry, and tooling upgrades ([#506](https://github.com/eli-l/zero/issues/506)) ([3c81fea](https://github.com/eli-l/zero/commit/3c81fea22873ee3df7fc97b10cb4f77792706c4b))
+* **agent:** curb over-engineering the solution in the editing discipline ([#517](https://github.com/eli-l/zero/issues/517)) ([f4c998a](https://github.com/eli-l/zero/commit/f4c998ac30c4f07ff313a2d706791e857293be49)), closes [#516](https://github.com/eli-l/zero/issues/516)
+* **agent:** inject per-user config.UserConfigDir()/zero/ZERO.md guidelines into system prompt ([#475](https://github.com/eli-l/zero/issues/475)) ([7b10aab](https://github.com/eli-l/zero/commit/7b10aab74bf14a01166b2cea22deab79bba9850b))
+* **openai:** forward prompt_cache_key for server-side prefix cache routing ([#515](https://github.com/eli-l/zero/issues/515)) ([87e7e69](https://github.com/eli-l/zero/commit/87e7e69afd18b5539579856f3a61c6a95bc445ae))
+* **providers:** add `zero providers models` to discover a provider's models ([#386](https://github.com/eli-l/zero/issues/386)) ([0bc8074](https://github.com/eli-l/zero/commit/0bc8074c97b0310e4a9d70c3f967003ee5e8a59f))
+* **providers:** add KiloCode and OpenCode provider support ([#388](https://github.com/eli-l/zero/issues/388)) ([b1ccb6d](https://github.com/eli-l/zero/commit/b1ccb6d9c1875377f5e5ea81a1304edd1e41ab4f))
+* **providers:** add Meituan LongCat catalog preset ([#424](https://github.com/eli-l/zero/issues/424)) ([b4275e3](https://github.com/eli-l/zero/commit/b4275e350472b2490212bf814709819d354c1216))
+* **providers:** OAuth login profiles and list-first /provider manager ([#560](https://github.com/eli-l/zero/issues/560)) ([1655056](https://github.com/eli-l/zero/commit/16550569c1be615cfaf244dab25909ec37f6dee6))
+* **providers:** split minimax zai into intl cn ([#398](https://github.com/eli-l/zero/issues/398)) ([aaad4d2](https://github.com/eli-l/zero/commit/aaad4d271270f41af837b6f3b60ae80beba0c645))
+* publish zero to npm via release-please ([#367](https://github.com/eli-l/zero/issues/367)) ([8eccc26](https://github.com/eli-l/zero/commit/8eccc2669887bc38d35bc16a315c888e4d9ec43a))
+* require manual approval before npm publish + drop release-as pin ([#369](https://github.com/eli-l/zero/issues/369)) ([bd89a1f](https://github.com/eli-l/zero/commit/bd89a1f451643c1b65ec803070abc7b116631ebe))
+* **sandbox:** unelevated Windows fallback tier instead of prompts-only degrade ([#427](https://github.com/eli-l/zero/issues/427)) ([b9ddd6f](https://github.com/eli-l/zero/commit/b9ddd6f42138312a1fee8d8bb67c46c8eb1dea2f))
+* support shift enter for composer newlines ([#462](https://github.com/eli-l/zero/issues/462)) ([daf65e0](https://github.com/eli-l/zero/commit/daf65e0af9a040314d4ab337b0ad59c55416b7bc))
+* **tui:** /loop — repeat a prompt or command on an interval or self-paced ([#502](https://github.com/eli-l/zero/issues/502)) ([387fe67](https://github.com/eli-l/zero/commit/387fe67ee7cd81317c9c969f5906a4437080fea3))
+* **tui:** add search/filter to provider picker in setup wizard ([#400](https://github.com/eli-l/zero/issues/400)) ([2fcea71](https://github.com/eli-l/zero/commit/2fcea71778d23e050c93409c471aef45b68c1621))
+* **tui:** FILES sidebar panel with click-to-select and file drill-in ([#365](https://github.com/eli-l/zero/issues/365)) ([142c548](https://github.com/eli-l/zero/commit/142c548c89a8652ce300e64ddf1228ee36df7606))
+* **tui:** remember recent provider+model selections in /model picker ([#568](https://github.com/eli-l/zero/issues/568)) ([d0c4e62](https://github.com/eli-l/zero/commit/d0c4e62cd429a0614c15296934c740a08bc0e07b))
+* **tui:** show CLI version on the startup home screen ([#538](https://github.com/eli-l/zero/issues/538)) ([fd69233](https://github.com/eli-l/zero/commit/fd69233e334f1823a06b5794085a9255b3abdfa8))
+* **update:** add zero upgrade command to apply self-updates ([#461](https://github.com/eli-l/zero/issues/461)) ([5f36349](https://github.com/eli-l/zero/commit/5f36349c1884e81fa9bc66bb5fe813b627e897b7))
+* voice dictation (speech-to-text) ([#557](https://github.com/eli-l/zero/issues/557)) ([87158a1](https://github.com/eli-l/zero/commit/87158a1c90b4f91fc5f2bb8178ebaf46d7654680))
+
+
+### Bug Fixes
+
+* **action:** keep provider key scoped to zero step ([#448](https://github.com/eli-l/zero/issues/448)) ([407a927](https://github.com/eli-l/zero/commit/407a92739ff508cba32d2c12b3f36f0efcdd54c3))
+* add android platform support for Termux npm install ([#455](https://github.com/eli-l/zero/issues/455)) ([9bd93c6](https://github.com/eli-l/zero/commit/9bd93c62f8d57fb74057284aa66a1b6e1429dcdd)), closes [#449](https://github.com/eli-l/zero/issues/449)
+* address bugs found in a multi-agent codebase audit ([#481](https://github.com/eli-l/zero/issues/481)) ([008bc9b](https://github.com/eli-l/zero/commit/008bc9b3f3ba13c7d4822b9559b020f381ff555b))
+* **agent:** keep tools exposed for max-turn finalization ([#533](https://github.com/eli-l/zero/issues/533)) ([3f0503b](https://github.com/eli-l/zero/commit/3f0503bc2312ae29d5ade784d8824dc9a3524958))
+* **agent:** reject a malformed additional_permissions payload before prompting ([#453](https://github.com/eli-l/zero/issues/453)) ([e4f760e](https://github.com/eli-l/zero/commit/e4f760ee8bd57299cd2fcb37e8e23130037c2607))
+* allow non-TLS connections to private-network provider endpoints ([#444](https://github.com/eli-l/zero/issues/444)) ([1d86384](https://github.com/eli-l/zero/commit/1d8638466ca31517eb9db2b9353d3dce1cbeeabc))
+* **auth:** propagate credentials to every provider-build surface and pin children to the live provider ([#366](https://github.com/eli-l/zero/issues/366)) ([6e0a665](https://github.com/eli-l/zero/commit/6e0a665118fe0e09c4b07d482dd18f86045acd2b))
+* **auth:** route zero auth login chatgpt to the dedicated ChatGPT flow ([#443](https://github.com/eli-l/zero/issues/443)) ([305a62c](https://github.com/eli-l/zero/commit/305a62c954ca6cec00bc58d5398f933415156aff))
+* **config:** fall back to a usable saved provider instead of forcing full re-onboarding ([#410](https://github.com/eli-l/zero/issues/410)) ([c60ad87](https://github.com/eli-l/zero/commit/c60ad8729f79bb841114d352ee2d2fe29d5d0e41))
+* **config:** let a gateway ANTHROPIC_BASE_URL resolve as anthropic-compatible ([#497](https://github.com/eli-l/zero/issues/497)) ([30dd7c3](https://github.com/eli-l/zero/commit/30dd7c3112ad22d42fa12b5addd4e38f4beda42a)), closes [#479](https://github.com/eli-l/zero/issues/479)
+* **config:** unbrick first-run setup — default google/anthropic models, enter setup on fixable config errors ([#385](https://github.com/eli-l/zero/issues/385)) ([72eed06](https://github.com/eli-l/zero/commit/72eed06b4f94c43d75d31fe54a58d2f566de059e))
+* **config:** use ~/.config on macOS and enter setup when no provider ([#371](https://github.com/eli-l/zero/issues/371)) ([#372](https://github.com/eli-l/zero/issues/372)) ([027a8f2](https://github.com/eli-l/zero/commit/027a8f2768b17b89f5c8270887f156e2ccda69ea))
+* **docs:** rename AGENTS.MD &gt; AGENTS.md ([#438](https://github.com/eli-l/zero/issues/438)) ([4266baf](https://github.com/eli-l/zero/commit/4266baf222df583ed2078b776687f12d496475b5))
+* **gemini:** strip unsupported JSON Schema fields from tool declarations ([#374](https://github.com/eli-l/zero/issues/374)) ([39e7100](https://github.com/eli-l/zero/commit/39e7100674150144a1152e3110c64c7cf0321d64)), closes [#373](https://github.com/eli-l/zero/issues/373)
+* gitignore Windows sandbox helpers and npm version marker ([#578](https://github.com/eli-l/zero/issues/578)) ([25653f6](https://github.com/eli-l/zero/commit/25653f686c016f95b81ceb7ff5d5452d37c4d4f3))
+* **install:** persist install dir to user PATH on Windows ([#407](https://github.com/eli-l/zero/issues/407)) ([bdb1b0e](https://github.com/eli-l/zero/commit/bdb1b0ecd15859b1712a6037d296dace7f9c3c3f))
+* **mcp:** block cross-origin credential redirects ([#396](https://github.com/eli-l/zero/issues/396)) ([f915f70](https://github.com/eli-l/zero/commit/f915f70e5a3096e2419fa8d961a0f84a626fa4a9))
+* **mcp:** silence startup warning for unconfigured default servers ([#563](https://github.com/eli-l/zero/issues/563)) ([302f58b](https://github.com/eli-l/zero/commit/302f58bb5f2a03ec7230354ed4747e4e55c16c50))
+* **oauth:** treat Windows ERROR_ACCESS_DENIED as lock contention in createSecretFile ([#445](https://github.com/eli-l/zero/issues/445)) ([d05e914](https://github.com/eli-l/zero/commit/d05e9148a7f79f67d1d3c31fca2775f21fbd331e))
+* **openai:** handle Ollama reasoning stream deltas ([#486](https://github.com/eli-l/zero/issues/486)) ([f6c0606](https://github.com/eli-l/zero/commit/f6c060631e18e082dda24cc4dc0903c31c2120d6))
+* preserve conversation context in exec prompts ([#460](https://github.com/eli-l/zero/issues/460)) ([949ee43](https://github.com/eli-l/zero/commit/949ee43f71e5cb7fab4695c5cb7b442fe4ecfbf7))
+* **provider-wizard:** allow multiple custom OpenAI-compatible providers ([#403](https://github.com/eli-l/zero/issues/403)) ([3fbbd28](https://github.com/eli-l/zero/commit/3fbbd28e4c586822cc4312c86232d94befe56e87))
+* **provider:** stop dropping custom no-auth providers on restart ([#558](https://github.com/eli-l/zero/issues/558)) ([ba99fa8](https://github.com/eli-l/zero/commit/ba99fa8d487fb28f2700e0ff10b2a25c75303cf7))
+* **sandbox:** fix nested pipe creation under the Windows restricted token ([#456](https://github.com/eli-l/zero/issues/456)) ([563a6db](https://github.com/eli-l/zero/commit/563a6dbe91e65d5daeefd7626e8a77e30a6d8fb2))
+* **sandbox:** gate /tmp test assertions on GOOS, not path existence ([#426](https://github.com/eli-l/zero/issues/426)) ([f653dca](https://github.com/eli-l/zero/commit/f653dcac363fb69ad7be5b35e6e0fa6d2bce476d))
+* **sandbox:** self-heal a corrupt unelevated setup marker ([#437](https://github.com/eli-l/zero/issues/437)) ([8d0c5fe](https://github.com/eli-l/zero/commit/8d0c5feccb8bdbfb015df0508aa6e3bcbd1fd0e8))
+* **specialist:** cap max specialist nesting depth ([#491](https://github.com/eli-l/zero/issues/491)) ([177442c](https://github.com/eli-l/zero/commit/177442cfe4015bd8df04cc9894f98b468ee796d4))
+* Termux/Android support — PRoot scroll, SIGSYS sandbox, build docs ([#509](https://github.com/eli-l/zero/issues/509)) ([0f69d99](https://github.com/eli-l/zero/commit/0f69d995e9b586b774f66c066b21abab5e03024a))
+* **tools:** Block MSYS coreutils under Windows sandbox ([#476](https://github.com/eli-l/zero/issues/476)) ([81aad58](https://github.com/eli-l/zero/commit/81aad58d97839e51c068e2f08907618991fdc3fb))
+* **tools:** CRLF line ending mismatch in edit_file tool on Windows ([#378](https://github.com/eli-l/zero/issues/378)) ([33dc7ae](https://github.com/eli-l/zero/commit/33dc7ae2cc82c5389675531e1416856dae7151ce))
+* **tools:** fix cmd.exe /S/C corrupting commands with embedded quotes ([#465](https://github.com/eli-l/zero/issues/465)) ([190241b](https://github.com/eli-l/zero/commit/190241bd593f43211b766e0b13c8e89802d4bb37))
+* **tools:** flag piped POSIX utilities before running on Windows ([#412](https://github.com/eli-l/zero/issues/412)) ([5658a36](https://github.com/eli-l/zero/commit/5658a366274fc59a9d5336b06a21019c9c25cbf1))
+* **tools:** make grep and glob respect run cancellation ([#464](https://github.com/eli-l/zero/issues/464)) ([ba6c026](https://github.com/eli-l/zero/commit/ba6c0264697b7d7ed479f6e782fba9700a481e3d))
+* **tools:** platform-specific pager suggestions, quote/caret-safe cd detection ([#543](https://github.com/eli-l/zero/issues/543)) ([8b248f4](https://github.com/eli-l/zero/commit/8b248f4e1198dc86ab332a697fba4cf520823cbd))
+* **tools:** require permission before web_search requests ([#382](https://github.com/eli-l/zero/issues/382)) ([960db96](https://github.com/eli-l/zero/commit/960db9660e4e31dc588fe8f7d6f116ff5e225566))
+* **tui:** bypass toggleSidebar and toggleMouse global shortcuts when composer is non-empty ([#576](https://github.com/eli-l/zero/issues/576)) ([c7346fb](https://github.com/eli-l/zero/commit/c7346fbcf01fe7e70ed2fcfccbf9965e5985727b))
+* **tui:** compose help overlay through the viewport overlay pipeline ([#421](https://github.com/eli-l/zero/issues/421)) ([5b2b4de](https://github.com/eli-l/zero/commit/5b2b4dea1aaf9e0f68baa25e97e83296fb17b1a2))
+* **tui:** keep the profile name on /model switch so the stored key resolves ([#441](https://github.com/eli-l/zero/issues/441)) ([9134148](https://github.com/eli-l/zero/commit/9134148f4df3e4e556fba6c2f8babfdf6fcfeee1)), closes [#440](https://github.com/eli-l/zero/issues/440)
+* **tui:** resolve every permission request so the agent can't deadlock ([#397](https://github.com/eli-l/zero/issues/397)) ([952788f](https://github.com/eli-l/zero/commit/952788f72d32957659fe004521fcc8372b9ba9b4))
+* **tui:** show an M suffix for million-scale token counts ([#457](https://github.com/eli-l/zero/issues/457)) ([0562e3b](https://github.com/eli-l/zero/commit/0562e3bef7df2328610a48a1e81632a8da4aec64))
+* **tui:** title /model rows by model name, not the catalog description ([#395](https://github.com/eli-l/zero/issues/395)) ([cdf9d83](https://github.com/eli-l/zero/commit/cdf9d839ae57a729f292f36f7c5b0c67b41b288d))
+* **tui:** update picker_test for switchProviderModel 4-value return ([#589](https://github.com/eli-l/zero/issues/589)) ([8f15650](https://github.com/eli-l/zero/commit/8f156506dc92449bd24caa14e36f28477ba00fff))
+
+
+### Performance Improvements
+
+* cache TUI model registry ([#496](https://github.com/eli-l/zero/issues/496)) ([e7d88b4](https://github.com/eli-l/zero/commit/e7d88b4b518049733da25a8447c00144bd1da518))
+* universal tool-output ceiling with spill + async post-edit diagnostics ([#518](https://github.com/eli-l/zero/issues/518)) ([95ccd5b](https://github.com/eli-l/zero/commit/95ccd5bc327f6fb464ff0239f7229de789f578dc))
+
 ## [0.2.0](https://github.com/Gitlawb/zero/compare/v0.1.0...v0.2.0) (2026-07-06)
 
 
